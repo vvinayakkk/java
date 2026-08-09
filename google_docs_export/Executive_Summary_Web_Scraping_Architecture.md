@@ -2,15 +2,15 @@
 
 > **Document Type**: Single Master Architectural Specification & Reference Manual.  
 > **Target Audience**: Lead Data Engineers, Systems Architects, and Security Researchers.  
-> **Format**: Text-Only Specification with AI Image Generation Prompts (Zero Mermaid blocks).  
+> **Format**: Text-First Specification with 3 Master AI Image Generation Prompts.  
 > **Scope**: Complete end-to-end breakdown of web data acquisition, browser internals, multi-process Chromium architecture, Browser Context isolation, document rendering, networking protocols, framework ecosystem evaluation (Pros & Cons), Playwright supremacy deep-dive, 5-layer anti-bot evasion stack, and maximum volume ad-tech data extraction.
 
 ---
 
 ## 1. Web Data Acquisition Paradigms & Core Mechanics
 
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A sleek modern tech architecture diagram illustrating Web Data Acquisition divided into Crawling (Discovery & Navigation) and Scraping (Parsing & Data Extraction), connected to an end-to-end automated pipeline. Professional dark mode UI design, neon blue and violet accents, high resolution, clean typography."*
+> 🎨 **AI Image Generation Prompt #1 (Master Acquisition Blueprint)**:  
+> *"A sleek modern technical architecture diagram illustrating Web Data Acquisition divided into Crawling (Discovery & Navigation) and Scraping (Parsing & Data Extraction), connected to an end-to-end automated pipeline. Professional dark mode UI design, neon blue and violet accents, high resolution, clean typography."*
 
 ### 1.1 Web Scraping (Data Extraction Layer)
 * **Definition**: The passive or targeted phase of data acquisition that parses already-retrieved HTML/XML/JSON payloads into clean, structured schemas.
@@ -22,9 +22,8 @@
 * **Core Operations**: Outbound link discovery, URL Frontier priority queue scheduling, visited URL deduplication (Bloom filters), `robots.txt` rate limit enforcement, pagination handling ("Next Page", `?page=N`), HTTP redirect resolution (`301`, `302`), and authentication token preservation.
 
 ### 1.3 Traditional HTTP Scraping vs. Headless Browser Crawling
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A comparison infographic comparing Traditional HTTP Scraping vs Headless Browser Crawling. Left side shows simple HTTP GET request to a web server returning static HTML. Right side shows a Playwright control protocol managing a full Chromium engine with V8 JavaScript & Blink layout engines rendering live DOM trees. Modern dark theme, tech diagram style."*
+* **Traditional HTTP Scraping**: Issues direct HTTP requests to web servers (`requests`, `httpx`, `aiohttp`) and parses raw response strings. Fast and lightweight (~15MB RAM), but completely fails on client-side JavaScript execution, dynamic DOM rendering, SPAs, and advanced bot protections.
+* **Headless Browser Crawling**: Controls real browser engines (Chromium, Firefox, WebKit) via automation protocols. Executes full V8 JavaScript, renders DOM trees, handles cookies/storage, and dispatches synthetic input events, at the cost of higher CPU/RAM usage (~150MB–350MB RAM).
 
 ### 1.4 Architectural Comparison Matrix
 
@@ -45,9 +44,8 @@
 * **Traditional HTTP Superior**: Static HTML pages, server-side rendered (SSR) blogs/news sites, reverse-engineered internal REST/GraphQL APIs, ultra-large-scale crawling (millions of pages), and bandwidth-constrained environments.
 
 ### 1.6 Infrastructure Resource Cost & Performance Tradeoffs
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A side-by-side technical resource gauge comparison. On the left: Traditional HTTP Scraper showing 2% CPU usage, 15MB RAM, 100 req/sec throughput. On the right: Headless Browser Crawler showing 45% CPU usage, 350MB RAM, 2-5 req/sec throughput. Clean corporate dashboard UI, dark background with glowing metrics."*
+* **Traditional HTTP Scraper**: ~2% CPU per worker thread, ~15MB RAM footprint, throughput ~100 req/sec per core.
+* **Headless Browser Crawler**: ~45% CPU per process (layout, reflow, V8 JIT), ~350MB RAM per process, throughput ~2-5 req/sec per core.
 
 ### 1.7 The Core Data Acquisition Mental Model
 > **`Crawler`** $\rightarrow$ **`Playwright Automation API`** $\rightarrow$ **`Chromium Engine`** $\rightarrow$ **`Browser Context`** $\rightarrow$ **`Page`** $\rightarrow$ **`Network + HTML/CSS/JS`** $\rightarrow$ **`Live DOM Tree`** $\rightarrow$ **`Playwright Locators / API Interception`** $\rightarrow$ **`Structured Data`**
@@ -56,9 +54,6 @@
 
 ## 2. Browser Architecture, Engine Mechanics & Object Model Hierarchy
 
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A top-down architectural hierarchy diagram of modern browser automation. Top node: Automation API (Playwright), branching to Browser Instance (Chromium Process), which branches to multiple Browser Contexts (Incognito Profiles), then Page Tabs, Main Frame & iframes, and finally live DOM Element nodes. Tech flowchart, glassmorphism UI."*
-
 ### 2.1 Scope of Headless Browser Capabilities
 Automation APIs control the full capabilities of modern browser binaries:
 * **Web Storage**: Cookies (Session/Persistent), LocalStorage (Origin Scope), SessionStorage (Tab Scope), IndexedDB (B-Tree Database), Cache API.
@@ -66,29 +61,23 @@ Automation APIs control the full capabilities of modern browser binaries:
 * **UI & Interaction**: Synthetic mouse/keyboard/touch events, form controls, file uploads/downloads, native alert/confirm modals, OOPIF iframe traversal, permissions, geolocation.
 
 ### 2.2 Chromium Core Engines (Blink, V8, Skia)
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A tri-engine technical architecture schematic showing Chromium's 3 core engines: Blink (Rendering Engine for HTML/CSS Layout), V8 (JavaScript JIT Engine for Bytecode execution), and Skia (Graphics Engine for 2D Canvas & GPU rasterization). Dark futuristic cyber design."*
+* **Blink**: Rendering engine derived from WebCore (WebKit). Parses HTML and CSS, computes element styles, calculates geometry layout (reflow), and builds the Render Tree.
+* **V8 Engine**: High-performance C++ JavaScript and WebAssembly engine. Performs Just-In-Time (JIT) compilation (Ignition interpreter $\rightarrow$ TurboFan compiler), memory allocation, and garbage collection.
+* **Skia Graphics Engine**: 2D graphics library used to rasterize visual layers and draw text, shapes, and image bitmaps onto CPU/GPU surface buffers.
 
 ### 2.3 Chromium Multi-Process Architecture
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A multi-process software architecture diagram of Chromium. Central node: Browser Process (Manager), connected via Mojo IPC to Renderer Process 1, Renderer Process 2, GPU Process, Network Service Process, and Storage Service Process. Clean system architecture block diagram, dark theme."*
-
-1. **Browser Process**: Manages application lifecycle, address bar, tab coordination, process creation, security permissions, and IPC message routing.
-2. **Renderer Process**: Runs inside an OS-level sandbox. Executes Blink (HTML/CSS parsing) and V8 (JavaScript execution). Spawns separate processes per domain (Site Isolation).
-3. **GPU Process**: Receives drawing commands from renderer processes and composites graphics onto screen buffers using DirectX, OpenGL, Vulkan, or Metal.
-4. **Network Service**: Handles network requests, socket pools, HTTP/1/2/3 protocols, SSL/TLS handshakes, and caching.
-5. **Storage Service**: Handles isolated disk I/O, IndexedDB transactions, and LevelDB database persistence.
+1. **Browser Process**: Central manager coordinating application UI, tab creation, OS IPC channels, window management, and security permissions.
+2. **Renderer Process**: Sandboxed process running Blink and V8. Responsible for parsing documents and executing scripts for a specific domain (Site Isolation).
+3. **GPU Process**: Isolated hardware graphics process compositing visual layers from multiple renderers onto screen buffers via DirectX, OpenGL, Vulkan, or Metal.
+4. **Network Service**: Out-of-process networking engine managing socket pools, SSL/TLS handshakes, HTTP/1/2/3 protocols, and network caches.
+5. **Storage Service**: Manages background disk I/O, IndexedDB NoSQL databases, and LevelDB persistence.
 
 ### 2.4 Browser Context Isolation (In-Memory Profiles & Scaling Optimization)
 A **Browser Context** represents an isolated, in-memory browser profile (equivalent to an Incognito session).
 
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"An isolated profile architecture diagram showing a single Chromium Browser Process hosting multiple isolated Browser Contexts (Profile 1 & Profile 2), each containing independent Cookies, LocalStorage, IndexedDB databases, and Page Tabs without spawning new browser binaries. High-end technical blueprint design."*
-
-> **IMPORTANT**: **Key Optimization Rule**: `New Browser Context ≠ New Chromium Process`.  
-> Creating a new Browser Context takes **milliseconds** and negligible RAM (~15MB) because it reuses the existing Chromium Browser process, GPU process, and Network Service while creating isolated state containers.
+* **Context State Realms**: Each context maintains completely separate Cookies, LocalStorage, SessionStorage, IndexedDB, Cache storage, permissions, and Page tabs.
+* **Key Optimization Rule**: `New Browser Context ≠ New Chromium Process`.  
+  Creating a new Browser Context takes **milliseconds** and negligible RAM (~15MB) because it reuses the existing Chromium Browser process, GPU process, and Network Service while creating isolated state containers.
 
 ### 2.5 Frame, iframe & Out-Of-Process iframe (OOPIF) Mechanics
 A **Frame** represents a document execution context. A Page contains one **Main Frame** and optional child `<iframe>` elements:
@@ -96,65 +85,57 @@ A **Frame** represents a document execution context. A Page contains one **Main 
 * **Cross-Origin `<iframe>` (OOPIF)**: Rendered in a completely separate OS Renderer Process for security. Parent scripts cannot read cross-origin iframe DOM without explicit `postMessage` permissions.
 
 ### 2.6 Browser Context Isolation vs. Domain Isolation
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A comparison diagram showing Domain/Origin Isolation enforced by Same-Origin Policy within one context vs Browser Context Isolation enforced between multiple incognito profiles. Dark blue tech aesthetic, sharp diagram vectors."*
+* **Domain / Origin Isolation**: Enforced by the browser's Same-Origin Policy (SOP) *within a single context* (`scheme://host:port`). Prevents `site-a.com` from reading cookies or DOM of `site-b.com`.
+* **Browser Context Isolation**: Enforced *between automation contexts*. Allows running two separate worker instances targeting `site-a.com` simultaneously with completely isolated user logins, session cookies, and local storage without interference.
 
 ---
 
 ## 3. Document Processing, Rendering Pipeline & Client Execution
 
 ### 3.1 The Document Object Model (DOM)
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A clean tree diagram visualizing the Document Object Model (DOM). Root node Document branching to html, body, div.product, h1 title, and button.buy nodes. Modern web development architecture illustration."*
+The DOM is an in-memory object graph representing HTML nodes (`Document` $\rightarrow$ `html` $\rightarrow$ `body` $\rightarrow$ `div` $\rightarrow$ `elements`). Automation scripts query DOM nodes via CSS selectors (`div.item > button#buy`), XPath expressions (`//button[text()='Buy']`), ARIA roles (`page.getByRole('button')`), or regex text matches (`page.getByText(/buy/i)`).
 
 ### 3.2 HTML Processing & Dynamic HTML Rendering
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A flowchart contrasting Static HTML Parsing vs Dynamic Client-Side Rendering (CSR). Top row shows initial HTML payload parsing into fixed DOM. Bottom row shows initial skeleton shell <div id='root'> executing JS Fetch APIs to dynamically insert nodes into a live DOM tree."*
+* **Static HTML Flow**: Raw HTML payload $\rightarrow$ Tokenization $\rightarrow$ Tree Construction $\rightarrow$ Fixed DOM Tree.
+* **Dynamic Client-Side Rendering (CSR)**: Bare skeleton HTML (`<div id="root"></div>`) $\rightarrow$ HTML Parsing $\rightarrow$ Skeleton DOM $\rightarrow$ V8 Executes JS Bundle $\rightarrow$ Fetch API Request $\rightarrow$ DOM Mutated in Place $\rightarrow$ Final Live DOM Tree.
 
 ### 3.3 V8 JavaScript Engine Runtime & Async Event Loop
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A technical pipeline diagram of V8 JavaScript compilation: JS Source Code -> AST Parser -> Ignition Interpreter -> Bytecode -> TurboFan JIT Compiler -> Native Machine Code Execution. Dark neon developer diagram."*
+* **V8 Compilation Pipeline**: JS Source Code $\rightarrow$ AST Parser $\rightarrow$ Ignition Interpreter (Generates Bytecode) $\rightarrow$ TurboFan JIT Compiler (Optimizes to Native Machine Code).
+* **Async Event Loop**: Monitors the Call Stack and moves callbacks from Microtask Queues (Promises, `await`) and Macrotask Queues (`setTimeout`, I/O) into execution context. Microtasks execute immediately after stack clearance before visual rendering yields.
 
 ### 3.4 The 8-Stage Browser Rendering Pipeline
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"An 8-stage linear browser rendering pipeline flowchart: 1. HTML Payload -> 2. HTML Parsing (DOM) -> 3. CSS Parsing (CSSOM) -> 4. Style Recalculation -> 5. Layout/Reflow -> 6. Paint -> 7. GPU Rasterization -> 8. Compositing Screen Draw. Vibrant cyan and purple step diagram."*
-
-### 3.5 Web Navigation Mechanics & SPA Routing
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A diagram illustrating 3 web navigation types: 1. Hard Server Navigation (Full page refresh), 2. Client-Side SPA Navigation (window.history.pushState with in-place DOM updates), 3. Hash Navigation (#section smooth scroll)."*
+1. **HTTP Payload Ingestion**: Receiving raw HTML byte streams over socket interfaces.
+2. **HTML Parsing**: Constructing the DOM tree (Document Object Model).
+3. **CSS Parsing**: Constructing the CSSOM tree (CSS Object Model).
+4. **Style Recalculation**: Combining DOM + CSSOM to compute exact visual styles for every element (Render Tree).
+5. **Layout / Reflow**: Calculating exact pixel positions ($X, Y$) and dimensions ($\text{Width}, \text{Height}$) for layout boxes.
+6. **Paint**: Filling text colors, background gradients, borders, and drop shadows into visual paint records.
+7. **Rasterization**: Converting paint records into GPU bitmap tiles.
+8. **Compositing**: Drawing composited GPU layers onto screen framebuffers.
 
 ---
 
 ## 4. Networking, Transport Protocols & Interception Layer
 
 ### 4.1 Protocol Stack Infrastructure
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A layered protocol stack diagram for modern web browsers. Top layer: Application Protocols (HTTP/1.1, HTTP/2 multiplexed, HTTP/3 QUIC, WebSockets, SSE). Middle layer: Transport Protocols (TCP & UDP). Bottom layer: Security (TLS 1.3 & JA4 Fingerprinting). Dark glassmorphism tech stack."*
+* **HTTP/1.1**: Text-based headers, sequential requests over persistent TCP connections; susceptible to head-of-line blocking.
+* **HTTP/2**: Binary protocol with stream multiplexing over a single TCP connection; uses HPACK header compression.
+* **HTTP/3 (QUIC)**: Binary protocol operating over UDP; eliminates TCP packet head-of-line blocking using independent QUIC streams and QPACK compression.
+* **TLS 1.3 & JA3/JA4+ Fingerprinting**: Negotiates TLS handshakes using `Client Hello` packets containing cipher suites, extensions, and elliptic curves. Security systems hash this packet to identify automation clients.
 
 ### 4.2 WebSockets (Full-Duplex Real-Time Data)
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A sequence diagram depicting WebSocket protocol handshake: Client sends HTTP GET Upgrade header -> Server responds 101 Switching Protocols -> Bidirectional real-time text/JSON frames streaming continuously over TCP."*
+WebSockets (`ws://` or `wss://`) begin with an HTTP GET request containing `Upgrade: websocket`. Upon receiving `HTTP 101 Switching Protocols`, a persistent full-duplex TCP channel is established. Scrapers intercept WebSocket frames (`page.on('websocket')`) to capture live financial prices, odds, or chat streams directly.
 
 ### 4.3 Network Interception & Request Routing (`page.route()`)
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A network interception architecture diagram. Script attaches page.route handler -> Intercepts Renderer Process requests -> Path A: Pass/Modify request headers & auth tokens -> Path B: Block heavy assets & return cached mock JSON. Dark cybersecurity network diagram."*
+Playwright's `page.route()` sits inside Chromium's network layer to intercept outgoing requests:
+* **Pass / Modify**: Inject custom `Authorization: Bearer <token>` headers or modify POST body payloads.
+* **Block / Mock**: Block static images/fonts (`.png`, `.jpg`, `.woff2`) to increase crawl speed by 5x, or return local JSON mock responses without sending traffic over the wire.
 
 ---
 
 ## 5. Storage Engines, Browser State & Security Isolation
 
 ### 5.1 Cookie Storage Engine & Security Flags
-Cookies are attached to HTTP headers (`Cookie:` request header and `Set-Cookie:` response header) managed strictly by Chromium's Network Service.
-
 ```http
 Set-Cookie: session_id=xyz123; Domain=.example.com; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=86400
 ```
@@ -171,41 +152,54 @@ Set-Cookie: session_id=xyz123; Domain=.example.com; Path=/; Secure; HttpOnly; Sa
 | **SameSite=None** | Cookie sent on all cross-site requests (requires `Secure` flag). |
 
 ### 5.2 Storage Matrix
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A grid matrix comparing browser client-side storage engines: LocalStorage (Key-value 10MB limit), SessionStorage (Tab-scoped), IndexedDB (NoSQL B-Tree database), Cache API (Service Worker responses), and HTTP Cookies (Header-attached with HttpOnly & SameSite flags). High tech infographic."*
+* **LocalStorage**: Origin-scoped key-value store (5MB–10MB) persisted across browser restarts.
+* **SessionStorage**: Isolated strictly to a single page tab; destroyed when tab closes.
+* **IndexedDB**: Asynchronous transactional NoSQL B-Tree database for large structured objects.
+* **Cache API**: Stores Request/Response pairs used by Service Workers for offline caching.
 
 ### 5.3 The 7-Level Browser Isolation Pyramid
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A 7-level security pyramid diagram showing browser isolation boundaries from bottom to top: Level 1: Site Isolation -> Level 2: Same-Origin Policy -> Level 3: Cookie Isolation -> Level 4: Browser Context Isolation -> Level 5: Renderer Process Isolation -> Level 6: OS Process Isolation -> Level 7: OS Sandbox. Glowing pyramid UI design."*
+* **Level 1**: Site Isolation (`scheme://host:port`).
+* **Level 2**: Same-Origin Policy (SOP).
+* **Level 3**: Cookie Attribute Isolation (`SameSite`, `HttpOnly`).
+* **Level 4**: Browser Context Isolation (Incognito profiles).
+* **Level 5**: Renderer Process Isolation (Separate OS PID per domain).
+* **Level 6**: OS Process Isolation.
+* **Level 7**: OS Sandbox (`seccomp`, `chroot` syscall filtering).
 
 ---
 
 ## 6. Dynamic Web Applications & UI Interaction Automation
 
 ### 6.1 Synthetic User Interactions
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"An event dispatching engine diagram for browser automation. Central Automation Dispatcher branching to Pointer/Mouse Actions (clicks, Bézier curve trails), Keyboard Input (typing cadence), and System Operations (file upload pickers & alert dialogs)."*
+Playwright dispatches low-level synthetic input events directly to Chromium's renderer:
+* **Pointer Events**: `click`, `dblclick`, `hover`, `dragAndDrop`, and mouse wheel scrolling.
+* **Keyboard Input**: `page.type(selector, text)` with micro-delays between keystrokes to trigger keydown listeners and auto-complete dropdowns.
+* **System Operations**: Intercepting file pickers (`setInputFiles()`), auto-accepting JS alerts (`window.alert()`), and catching new window popups (`target="_blank"`).
 
 ### 6.2 CSR vs. SSR & Client Hydration
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A comparison infographic of CSR (React SPA empty div shell + client fetch) vs SSR + Hydration (Next.js pre-rendered HTML + static script hydration). Modern web development diagram."*
+* **Client-Side Rendering (CSR)**: React/Vue SPAs fetch empty HTML shells and build DOM via JS Fetch API calls.
+* **Server-Side Rendering (SSR + Hydration)**: Next.js/Nuxt pre-render full HTML on the server and embed initial props inside `<script id="__NEXT_DATA__">`. Scrapers can extract this JSON script tag directly without rendering the page!
 
 ---
 
 ## 7. Crawling System Design, Traversal Strategies & State Control
 
-### 7.1 Crawler State Architecture
+### 7.1 Crawler State Components
+* **URL Frontier**: Priority queue managing discovered URLs waiting to be crawled.
+* **Visited Set (Bloom Filters)**: High-performance probabilistic in-memory bitset used to check URL membership in $O(1)$ time with zero duplicate crawls.
+* **URL Normalization**: Standardizing URLs (`HTTP://Example.COM:80/foo/` $\rightarrow$ `http://example.com/foo`) and stripping marketing tracking query parameters (`?utm_source=...`, `?ref=...`).
 
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A high-scale web crawler state architecture diagram displaying URL Frontier (Priority Queue), Visited Set (SHA256 Bloom Filters), Queue Engine (Redis/RabbitMQ), Deduplication Engine, and Crawl Audit Metadata Store."*
+### 7.2 Graph Traversal Strategies
+* **Breadth-First Search (BFS)**: Level-by-level queue discovery; optimal for high-level category crawling.
+* **Depth-First Search (DFS)**: Deep stack traversal; optimal for targeting deep specific documents.
+* **Priority Crawling**: Ranks URLs dynamically based on domain authority, update frequency, or keyword relevance.
 
 ---
 
 ## 8. Automation Framework Ecosystem & Playwright Deep-Dive
+
+> 🎨 **AI Image Generation Prompt #2 (Playwright & Concurrency Scaling)**:  
+> *"A central feature hub diagram illustrating why Playwright is the #1 browser automation engine: Multi-engine support (Chromium/Firefox/WebKit), Light-Speed Context Isolation, Smart Auto-Waiting, Native Network Routing, Storage State Persistence, and Multi-language APIs. Clean tech diagram, dark mode UI."*
 
 ### 8.1 Complete Automation Framework Matrix & Pros/Cons Analysis
 
@@ -239,48 +233,48 @@ Set-Cookie: session_id=xyz123; Domain=.example.com; Path=/; Secure; HttpOnly; Sa
 * **Pros**: Unmatched HTTP speed and throughput; built-in pipelines for URL scheduling, middleware, proxy rotation, and CSV/JSON/Parquet exports.
 * **Cons**: Cannot execute JavaScript or render Single Page Applications (SPAs) natively without browser plugins (`scrapy-playwright`).
 
-### 8.3 Why Playwright Reigns Supreme: The #1 Browser Automation Tool
+### 8.3 Concurrency Scaling Models
+* **Strategy 1: Multiple Pages in 1 Context**: Lowest RAM usage, but shares cookies and session identity across tabs.
+* **Strategy 2: Multiple Contexts in 1 Browser (RECOMMENDED)**: Low RAM overhead (~15MB per context), 100% isolated incognito storage, cookies, and identity.
+* **Strategy 3: Multiple Browsers on 1 Machine**: High RAM overhead (~350MB per process); maximum OS process isolation.
+* **Strategy 4: Distributed Kubernetes Grid**: Infinite scale across containerized Playwright worker nodes.
 
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A central feature hub illustrating why Playwright is the #1 automation engine: Multi-engine support (Chromium/Firefox/WebKit), Light-Speed Context Isolation, Smart Auto-Waiting, Native Network Routing, Storage State Persistence, and Multi-language APIs."*
-
-### 8.4 Browser Crawling Concurrency Scaling Models
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A 4-grid diagram showing crawler concurrency models: Strategy 1: Multiple Pages in 1 Context, Strategy 2: Multiple Isolated Contexts in 1 Browser (Recommended), Strategy 3: Multiple Browsers, Strategy 4: Distributed Kubernetes Worker Grid."*
-
-### 8.5 Complete 20-Step End-to-End Playwright Crawl Workflow
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A comprehensive 20-step circular/linear workflow flowchart illustrating an end-to-end Playwright crawl pipeline from Seed URL ingestion, Chromium launch, context allocation, network route setup, DOM wait, locator evaluation, to Bloom filter link deduplication and data warehouse storage."*
+### 8.4 Complete 20-Step End-to-End Playwright Crawl Workflow
+1. Seed URL Ingestion $\rightarrow$ 2. Priority Frontier Scheduling $\rightarrow$ 3. Playwright Async Init $\rightarrow$ 4. Headless Binary Launch $\rightarrow$ 5. Browser Context Allocation $\rightarrow$ 6. Open Target Page $\rightarrow$ 7. Network Interception Setup (`page.route`) $\rightarrow$ 8. Navigate (`page.goto`) $\rightarrow$ 9. TLS / HTTP2 Handshake $\rightarrow$ 10. Subresource Load $\rightarrow$ 11. V8 Script Execution $\rightarrow$ 12. State Population (`storageState`) $\rightarrow$ 13. DOM Render (Blink Layout/Paint) $\rightarrow$ 14. Synthetic Interactions (Click/Scroll) $\rightarrow$ 15. Dynamic Mutation Wait $\rightarrow$ 16. Data Extraction (XHR JSON Interception & Locators) $\rightarrow$ 17. Schema Cleaning $\rightarrow$ 18. Storage (Postgres/Parquet/S3) $\rightarrow$ 19. Link Discovery & Bloom Deduplication $\rightarrow$ 20. Context Teardown & Next URL Fetch.
 
 ---
 
 ## 9. Stealth Anti-Bot Evasion & Advanced Data Extraction Architecture
 
-### 9.1 The 5-Layer Anti-Bot Detection Landscape
+> 🎨 **AI Image Generation Prompt #3 (5-Layer Anti-Bot Stealth Architecture)**:  
+> *"A 5-layer security architecture diagram comparing Anti-Bot Detection vs Stealth Evasion: Layer 1: TLS JA4 Handshake Matching -> Layer 2: Engine CDP Leak Patching (Patchright & Camoufox C++) -> Layer 3: WebGL/Canvas Noise Randomization -> Layer 4: Bézier Curve Mouse Humanization -> Layer 5: AI CAPTCHA Solvers. High-tech cyber security illustration."*
 
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A 5-layer cybersecurity threat evaluation diagram showing incoming scraper requests evaluated sequentially through Layer 1: TLS JA4 Handshake -> Layer 2: IP Reputation -> Layer 3: Engine CDP Leaks -> Layer 4: WebGL/Canvas Fingerprints -> Layer 5: Behavioral Honeypots. Mismatches lead to 403 blocks; clean requests pass to 200 OK."*
+### 9.1 The 5-Layer Anti-Bot Detection Landscape
+Security platforms (Cloudflare Turnstile, DataDome, Akamai, Kasada, Imperva) evaluate requests across 5 layers:
+* **Layer 1: Protocol & TLS Handshake (JA3 / JA4+)**: Hashes the TLS `Client Hello` packet. Discrepancies between TLS cipher suites and User-Agent headers trigger immediate 403 blocks.
+* **Layer 2: IP Reputation & TCP Fingerprint**: Checks IP ranges (datacenter vs residential/mobile 4G) and TCP window sizes.
+* **Layer 3: Browser Engine & CDP Leaks**: Detects `navigator.webdriver = true` and Chrome DevTools Protocol (`Runtime.enable`) context pollution.
+* **Layer 4: Runtime Fingerprinting**: Evaluates WebGL GPU renderer strings (`UNMASKED_RENDERER_WEBGL`), 2D Canvas hashes, AudioContext frequency outputs, and WebRTC real IP leaks.
+* **Layer 5: Behavioral Honeypots**: Tracks non-human linear mouse movements, instant click delays, and invisible honeypot link traps.
 
 > **WARNING**: **The Coherence Rule**: Modern anti-bot security systems flag requests primarily on **mismatches between layers**. Presenting a Chrome User-Agent header while using a Python OpenSSL TLS signature or a standard Playwright CDP connection causes an instant 403 block.
 
 ### 9.2 The 5-Layer Unbreakable Stealth Stack
+* **Layer 1: TLS & JA4 Matching**: Utilizing `curl_cffi` / `uTLS` or patched browser engines to match TLS handshakes directly with browser binaries.
+* **Layer 2: Engine-Level CDP Leak Patching**:
+  * **Patchright**: Drop-in Playwright replacement that patches CDP leaks, removes `Runtime.enable` signals, and overrides `navigator.webdriver`.
+  * **Camoufox**: Spoofed C++ Firefox engine binary that randomizes WebGL, Canvas, and WebRTC fingerprints directly at browser source code level.
+  * **Nodriver**: Direct CDP control bypassing WebDriver drivers.
+* **Layer 3: Hardware Fingerprint Randomization**: Overriding `UNMASKED_RENDERER_WEBGL` with real NVIDIA/AMD GPU signatures and injecting micro-noise into 2D canvas outputs.
+* **Layer 4: Human Behavioral Mimicry**: Generating non-deterministic cubic **Bézier curve mouse paths** (with acceleration, deceleration, and jitter), human typing cadence (30ms–150ms delays), and filtering invisible honeypot elements.
+* **Layer 5: AI CAPTCHA Solvers**: Utilizing multimodal LLM vision models (GPT-4o, Claude 3.5) to auto-resolve Cloudflare Turnstile and visual image challenges.
 
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A 5-layer stealth defense architecture diagram: Layer 1: TLS JA4 Alignment (curl_cffi) -> Layer 2: Engine CDP Patching (Patchright & Camoufox C++) -> Layer 3: WebGL/Canvas Noise Randomization -> Layer 4: Bézier Curve Mouse Humanization -> Layer 5: AI CAPTCHA Solvers."*
+### 9.3 Maximum Volume Data Extraction Engine (Ad Tech, Google Ads, `window.dataLayer`)
+* **Ad Tech & Google Ads Metadata**: Extracting `googlesyndication.com` script tags, iframe ad parameters, slot IDs, bid auction data, and destination URLs.
+* **Marketing Pixels & `window.dataLayer`**: Intercepting tracking pixels (Facebook, Criteo, Taboola) and querying `window.dataLayer` for analytics events.
+* **Inline State & Shadow DOM**: Parsing `<script id="__NEXT_DATA__">`, Redux state, JSON-LD schemas, open Shadow DOM roots, and OOPIF iframes.
 
-### 9.3 Behavioral Humanization (Bézier Curves)
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A mouse movement trajectory comparison diagram. Linear robot mouse path vs Non-deterministic cubic Bézier curve mouse trajectory with speed curves, micro-jitter, deceleration, hover, and click action."*
-
-### 9.4 Maximum Data Volume Extraction Engine (Ad Tech, Google Ads, `window.dataLayer`)
-
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"An ad-tech data extraction architecture diagram showing a stealth browser capturing 5 data targets: Live DOM tree, Background XHR/Fetch JSON responses, Ad Tech/Google Ads parameters, Inline Next.js state (__NEXT_DATA__ & window.dataLayer), and Shadow DOM/OOPIF iframes, piping to a PostgreSQL/Parquet data warehouse."*
-
-### 9.5 Production Master Stealth Scraper Code Implementation
+### 9.4 Production Master Stealth Scraper Code Implementation
 
 ```python
 import asyncio
@@ -381,7 +375,7 @@ if __name__ == "__main__":
     asyncio.run(run_stealth_scraper("https://example.com"))
 ```
 
-### 9.6 Architectural Comparison of Modern Stealth Engines
+### 9.5 Stealth Engine Comparison Matrix
 
 | Feature / Tool | Playwright (Standard) | Patchright | Camoufox | Nodriver |
 | :--- | :--- | :--- | :--- | :--- |
@@ -393,7 +387,6 @@ if __name__ == "__main__":
 
 ---
 
-## 10. Master Architectural Blueprint
+## 10. Master Architectural Mental Model
 
-> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
-> *"A master architectural blueprint diagram showing Crawler Engine -> Patchright/Camoufox Stealth Engine -> JA4 TLS Proxy -> Browser Context -> Page Tab -> Network/Ad Interception -> Live DOM & State -> Data Pipeline. Sleek dark cyberpunk technology diagram."*
+> **`Crawler Engine`** $\rightarrow$ **`Patchright / Camoufox Engine`** $\rightarrow$ **`JA4 TLS Matching + Residential Proxy`** $\rightarrow$ **`Browser Context`** $\rightarrow$ **`Page Tab`** $\rightarrow$ **`Network & Ad Interception`** $\rightarrow$ **`Live DOM & Inline State`** $\rightarrow$ **`Data Warehouse Pipeline`**
