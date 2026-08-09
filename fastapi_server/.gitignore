@@ -1,0 +1,20 @@
+# Virtual Environment & Python Caches
+venv/
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Environment & Secrets
+.env
+
+# Database Files
+*.db
+*.sqlite3
+
+# Outputs & Reports
+output/
+screenshots/
+*.json
+*.html
+!Postman_Collection.json

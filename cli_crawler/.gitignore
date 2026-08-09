@@ -1,0 +1,11 @@
+# Virtual Environment & Python Caches
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Outputs
+output/
+screenshots/
+*.json
+*.html

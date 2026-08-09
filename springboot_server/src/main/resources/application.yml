@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: Forbes AdTech Crawler API (Spring Boot)
+  datasource:
+    url: ${DATABASE_URL:jdbc:mysql://localhost:3306/adtech_crawler?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 2000ms
+
+server:
+  port: ${PORT:8080}
+
+app:
+  version: 2.0.0
+  cache-ttl-seconds: ${CACHE_TTL_SECONDS:3600}
+  default-concurrency: ${DEFAULT_CONCURRENCY:5}
+  output-dir: ${OUTPUT_DIR:./output}

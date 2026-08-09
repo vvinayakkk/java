@@ -1,0 +1,132 @@
+{
+	"info": {
+		"_postman_id": "springboot-adtech-crawler-api",
+		"name": "Forbes AdTech Crawler API (Spring Boot)",
+		"description": "Postman Collection for Spring Boot 3 Enterprise AdTech Web Crawler API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/",
+					"host": ["{{baseUrl}}"],
+					"path": [""]
+				}
+			}
+		},
+		{
+			"name": "2. Trigger Single Crawl",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"url\": \"https://www.forbes.com\",\n  \"forceRefresh\": false\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/crawl",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "crawl"]
+				}
+			}
+		},
+		{
+			"name": "3. Trigger Batch Crawl",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"urls\": [\n    \"https://www.forbes.com\",\n    \"https://techcrunch.com\"\n  ],\n  \"concurrency\": 4,\n  \"forceRefresh\": false\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/crawl/batch",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "crawl", "batch"]
+				}
+			}
+		},
+		{
+			"name": "4. List Historical Crawl Jobs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/crawls?limit=10&offset=0",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "crawls"],
+					"query": [
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						}
+					]
+				}
+			}
+		},
+		{
+			"name": "5. Get Job Detail",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/crawls/{{jobId}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "crawls", "{{jobId}}"]
+				}
+			}
+		},
+		{
+			"name": "6. Get Cache Stats",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/cache/stats",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "cache", "stats"]
+				}
+			}
+		},
+		{
+			"name": "7. Clear Cache",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/cache/clear",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "cache", "clear"]
+				}
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "jobId",
+			"value": "sample-job-uuid"
+		}
+	]
+}

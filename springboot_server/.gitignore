@@ -1,0 +1,19 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!mvnw
+!mvnw.cmd
+.mvn/
+.env
+
+# IDE & OS Caches
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.DS_Store
+
+# Output & Reports
+output/
+screenshots/
+*.log

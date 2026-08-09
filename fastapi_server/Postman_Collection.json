@@ -1,0 +1,152 @@
+{
+  "info": {
+    "_postman_id": "a8c9b201-9f12-4e3a-8b1c-3d4e5f6a7b8c",
+    "name": "Forbes AdTech Web Crawler API",
+    "description": "Enterprise Postman collection for Forbes AdTech Web Crawler FastAPI Server.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "System Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/",
+          "host": ["{{baseUrl}}"],
+          "path": [""]
+        }
+      }
+    },
+    {
+      "name": "Trigger Single Crawl",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://www.forbes.com\",\n  \"force_refresh\": false\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/crawl",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "crawl"]
+        }
+      }
+    },
+    {
+      "name": "Trigger Single Crawl (Force Refresh)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://www.forbes.com\",\n  \"force_refresh\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/crawl",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "crawl"]
+        }
+      }
+    },
+    {
+      "name": "Trigger Batch Crawl",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"urls\": [\n    \"https://www.forbes.com\",\n    \"https://techcrunch.com\",\n    \"https://www.businessinsider.com\"\n  ],\n  \"concurrency\": 4,\n  \"force_refresh\": false\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/crawl/batch",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "crawl", "batch"]
+        }
+      }
+    },
+    {
+      "name": "List Crawl History",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/crawls?limit=20&offset=0",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "crawls"],
+          "query": [
+            { "key": "limit", "value": "20" },
+            { "key": "offset", "value": "0" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Crawl Job Detail",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/crawls/{{job_id}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "crawls", "{{job_id}}"]
+        }
+      }
+    },
+    {
+      "name": "Get HTML Dashboard Report",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/crawls/{{job_id}}/report",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "crawls", "{{job_id}}", "report"]
+        }
+      }
+    },
+    {
+      "name": "Get Redis Cache Stats",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/cache/stats",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "cache", "stats"]
+        }
+      }
+    },
+    {
+      "name": "Clear Redis Cache",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/cache/clear",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "cache", "clear"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "job_id",
+      "value": "sample-uuid-job-id",
+      "type": "string"
+    }
+  ]
+}
