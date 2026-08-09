@@ -1,178 +1,145 @@
-# Enterprise FastAPI Web Application Server
+# 🚀 FastAPI AdTech Web Crawler REST Service
 
-Enterprise-grade AdTech Web Crawler REST API featuring **MySQL Relational Persistence**, **Multi-Layered Redis Caching**, **Docker Containerization**, **Pytest Automated Test Suite**, and **Postman Collection**.
+> **High-Performance Asynchronous Python Web Crawler REST API**  
+> Built with **FastAPI**, **Playwright Async API**, **SQLAlchemy ORM**, **SQLite / MySQL Persistence**, **Redis Caching**, **Pytest Test Suite**, and **Docker**.
 
 ---
 
-## 🛠️ Prerequisites & Setup
+## ⚡ How Asynchronous Parallel Crawling Works in Code (`app/main.py`)
 
-### 1. Environment File (`.env`)
-Create or edit `.env` inside `fastapi_server/`:
+In FastAPI, async concurrency allows handling multiple REST API requests and crawling multiple website URLs simultaneously without blocking the main event loop.
 
-```env
-# Application Settings
-PROJECT_NAME=Forbes AdTech Crawler API
-VERSION=2.0.0
-DEBUG=False
-DEFAULT_CONCURRENCY=5
+### 1. Code Implementation (`trigger_batch_crawl`)
+In `app/main.py`, batch crawling is handled asynchronously using `asyncio.Semaphore` and `asyncio.gather()`:
 
-# MySQL Database Settings
-MYSQL_HOST=localhost
-MYSQL_PORT=3306
-MYSQL_USER=root
-MYSQL_PASSWORD=root
-MYSQL_DATABASE=adtech_crawler
-DATABASE_URL=mysql+pymysql://root:root@localhost:3306/adtech_crawler
+```python
+# File: app/main.py
+@app.post("/api/v1/crawl/batch")
+async def trigger_batch_crawl(req: BatchCrawlRequest, db: Session = Depends(get_db)):
+    # Create worker concurrency limiter from payload or default settings
+    semaphore = asyncio.Semaphore(req.concurrency or settings.DEFAULT_CONCURRENCY)
+    service = CrawlService(db=db)
 
-# Redis Caching Settings
-REDIS_HOST=localhost
-REDIS_PORT=6379
-REDIS_DB=0
-REDIS_PASSWORD=
-CACHE_TTL_SECONDS=3600
+    async def crawl_with_sem(url: str):
+        async with semaphore:  # Bounded worker lock
+            return await service.crawl_url(url, force_refresh=req.force_refresh)
 
-# File Storage Output Directory
-OUTPUT_DIR=./output
+    # Spawn async tasks concurrently
+    tasks = [crawl_with_sem(u) for u in req.urls]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    return {"total_urls": len(req.urls), "results": results}
+```
+
+### 2. Architectural Highlights to Explain in Code Reviews
+* **FastAPI Async Routes (`async def`)**: Routes are declared as `async def` so Uvicorn delegates I/O wait times (network traffic, Playwright navigation) to the event loop.
+* **Non-Blocking Redis Caching (`app/redis_cache.py`)**: Checks Redis cache keys before triggering Playwright. If cached, returns responses in `<10ms`!
+* **Database Thread Offloading (`SQLAlchemy`)**: Heavy database writes are handled cleanly so the API remains responsive to incoming HTTP requests.
+
+---
+
+## 🛠️ How to Customize URLs & Concurrency Parameters
+
+You can customize target URLs and parallel concurrency levels directly in your API request payloads.
+
+### 1. Single URL Crawl Request
+**`POST /api/v1/crawl`**
+```json
+{
+  "url": "https://www.yourcustomwebsite.com",
+  "force_refresh": false
+}
 ```
 
 ---
 
-### 2. Setup Local Python Environment (`venv`)
+### 2. Custom Batch Parallel Crawl Request
+**`POST /api/v1/crawl/batch`**
+Pass any array of custom URLs and set `concurrency` (e.g. `4` parallel workers):
 
+```json
+{
+  "urls": [
+    "https://www.forbes.com",
+    "https://www.bloomberg.com",
+    "https://www.reuters.com",
+    "https://www.techcrunch.com",
+    "https://www.wsj.com"
+  ],
+  "concurrency": 4,
+  "force_refresh": false
+}
+```
+
+*Example cURL Command:*
+```bash
+curl -X POST "http://localhost:8000/api/v1/crawl/batch" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "urls": ["https://www.forbes.com", "https://www.techcrunch.com"],
+    "concurrency": 2,
+    "force_refresh": false
+  }'
+```
+
+---
+
+## 🚀 Quick Setup & Execution Guide
+
+### Step 1: Navigate to Project Directory
 ```bash
 cd fastapi_server
+```
 
-# Create Virtual Environment
-python -m venv venv
-
-# Activate Virtual Environment (Windows PowerShell)
-.\venv\Scripts\Activate.ps1
-
-# Install Server Dependencies
+### Step 2: Install Dependencies
+```bash
 pip install -r requirements.txt
-
-# Install Playwright Chromium Binaries
-python -m playwright install chromium
+playwright install chromium
 ```
+
+### Step 3: Run the Server
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Interactive documentation is available immediately at:
+* **Swagger UI**: `http://localhost:8000/docs`
+* **ReDoc**: `http://localhost:8000/redoc`
 
 ---
 
-## 🚀 Running & Testing the Server
+## 🧪 Automated Testing Guide
 
-### 1. Launch FastAPI Server Locally
+Run the full pytest suite:
+
 ```bash
-uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+pytest -v
 ```
-- **Interactive Swagger Docs**: `http://127.0.0.1:8000/docs`
-- **ReDoc Documentation**: `http://127.0.0.1:8000/redoc`
+
+### Test Coverage:
+* `test_read_root`: Verifies root health check endpoint.
+* `test_cache_stats_endpoint`: Verifies Redis/in-memory cache statistics retrieval.
+* `test_cache_clear_endpoint`: Verifies cache flush mechanics.
+* `test_invalid_crawl_request`: Verifies Pydantic request payload validation (422 Unprocessable Entity).
 
 ---
 
-### 2. Run Automated Pytest Test Suite
-```bash
-python -m pytest tests/test_api.py
+## 📁 Codebase Structure & Key Modules
+
+```text
+fastapi_server/
+├── app/
+│   ├── main.py                  # FastAPI Application Routes & Async Batch Handler
+│   ├── config.py                # Environment Variables & Settings (Pydantic Settings)
+│   ├── db.py                    # SQLAlchemy Database Connection & Session Factory
+│   ├── models.py                # Database ORM Entities (CrawlJob, CrawlPayload)
+│   ├── schemas.py               # Pydantic Schemas for API Requests/Responses
+│   ├── redis_cache.py           # Redis Cache Manager with In-Memory Fallback
+│   └── services/
+│       ├── crawl_service.py     # Business Service Layer handling Crawl & Cache Lookup
+│       ├── crawler_engine.py    # Playwright Async Engine Integration
+│       └── reporter.py          # Dark-Mode HTML Report Generator
+├── tests/
+│   └── test_api.py              # Pytest API Test Suite
+├── requirements.txt             # Python Dependencies List
+└── test_e2e_verification.py    # End-to-End API Integration Script
 ```
-
----
-
-### 3. Run Live End-to-End Verification Suite
-Tests live crawling, database persistence, cache miss, cache hit (< 8ms), and cache clear APIs:
-```bash
-python test_e2e_verification.py
-```
-
----
-
-## 🐳 Docker Deployment Commands
-
-### 1. Build and Start API + MySQL + Redis Containers
-```bash
-docker compose up --build -d
-```
-
-### 2. View Live Container Status & Logs
-```bash
-docker compose ps
-docker compose logs -f api
-```
-
-### 3. Stop Docker Containers
-```bash
-docker compose down
-```
-
----
-
-## 🗄️ Manual MySQL CLI Commands & Verification
-
-### 1. Log into MySQL CLI manually (Windows)
-
-#### Option A: Direct Executable Path
-```powershell
-& "C:\Program Files\MySQL\MySQL Server 8.4\bin\mysql.exe" -u root -p
-```
-
-#### Option B: standard CLI (or inside Docker)
-```bash
-mysql -u root -p
-```
-> **Prompt Password**: `root`
-
----
-
-### 2. Useful SQL Commands
-
-Once logged into the MySQL shell (`mysql>`), run:
-
-#### List all databases
-```sql
-SHOW DATABASES;
-```
-
-#### Switch to the crawler database
-```sql
-USE adtech_crawler;
-```
-
-#### View all populated tables
-```sql
-SHOW TABLES;
-```
-
-#### Query recent crawl jobs
-```sql
-SELECT job_id, target_url, status, quality_score, quality_rating, created_at 
-FROM crawl_jobs 
-ORDER BY created_at DESC;
-```
-
-#### Query extracted ad slots and winning CPM bids
-```sql
-SELECT slot_id, width, height, is_visible, winning_bidder, winning_cpm 
-FROM ad_slots 
-LIMIT 10;
-```
-
-#### Query demand partner bidder metrics
-```sql
-SELECT bidder_code, bids_count, max_cpm, avg_cpm 
-FROM bidder_summaries;
-```
-
-#### Exit MySQL Shell
-```sql
-EXIT;
-```
-
----
-
-## 📮 Postman Collection
-Import `Postman_Collection.json` into Postman to execute pre-configured API endpoints:
-- `GET /` (Health Check)
-- `POST /api/v1/crawl` (Single Crawl)
-- `POST /api/v1/crawl/batch` (Batch Crawl)
-- `GET /api/v1/crawls` (List Jobs)
-- `GET /api/v1/crawls/{job_id}` (Job Details)
-- `GET /api/v1/crawls/{job_id}/report` (HTML Report)
-- `GET /api/v1/cache/stats` (Cache Stats)
-- `POST /api/v1/cache/clear` (Clear Cache)
