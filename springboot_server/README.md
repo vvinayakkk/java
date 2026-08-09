@@ -22,6 +22,20 @@ java -jar target/crawler-2.0.0.jar
 
 ---
 
+## 💡 Important: Live Server Logging (`localhost:8080`) vs. Unit Testing (`mvn test`)
+
+It is important to understand how testing vs live server execution operates in Spring Boot:
+
+### 1. Why `mvn test` does NOT print server logs in your running CLI terminal
+* `mvn test` executes unit tests in a completely separate, isolated test process using Spring's **`MockMvc` framework**.
+* `MockMvc` simulates HTTP requests and responses **in-memory** without sending network packets over port `8080`. This allows tests to run in milliseconds without needing a running server or open network ports.
+
+### 2. How to see live Playwright browser crawls, Redis cache hits/misses, and SQL logs in your server terminal
+* Your running server CLI terminal (`java -jar target/crawler-2.0.0.jar` or `mvn spring-boot:run`) hosts a live Tomcat web server listening on **`http://localhost:8080`**.
+* To see live Playwright Chromium launches, network route interceptions, Redis cache hits/misses, and SQL queries printed in real-time in your server terminal, send real HTTP requests from a browser, Postman, or a **second terminal tab** using `curl` or `python test_e2e_verification.py`!
+
+---
+
 ## ⚙️ System Prerequisites
 
 Ensure the following tools are installed and available on your system PATH:
@@ -101,7 +115,42 @@ docker compose down
 
 ---
 
-## 📡 REST API Endpoint Reference & cURL Commands
+## 🧪 Live Verification cURL Commands (Run in a Second Terminal Tab)
+
+With the server running on `http://localhost:8080` in your 1st terminal tab, open a **2nd terminal tab** and run these commands:
+
+```bash
+# 1. Check Server Health Endpoint
+curl -X GET "http://localhost:8080/"
+
+# 2. Trigger Live Stealth Playwright Crawl (Cache Miss -> Launches Headless Chromium)
+curl -X POST "http://localhost:8080/api/v1/crawl" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://www.forbes.com", "forceRefresh": false}'
+
+# 3. Trigger Repeat Crawl Request (Cache Hit -> Responds in <10ms from Redis Cache!)
+curl -X POST "http://localhost:8080/api/v1/crawl" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://www.forbes.com", "forceRefresh": false}'
+
+# 4. Trigger Force Refresh Crawl (Bypasses Cache -> Re-executes Playwright Crawl)
+curl -X POST "http://localhost:8080/api/v1/crawl" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://www.forbes.com", "forceRefresh": true}'
+
+# 5. Fetch Crawl History List
+curl -X GET "http://localhost:8080/api/v1/crawls?limit=10"
+
+# 6. Fetch Redis Cache Statistics
+curl -X GET "http://localhost:8080/api/v1/cache/stats"
+
+# 7. Clear Redis Cache Keys
+curl -X POST "http://localhost:8080/api/v1/cache/clear"
+```
+
+---
+
+## 📡 REST API Endpoint Reference
 
 Base Server URL: `http://localhost:8080`
 
@@ -159,19 +208,6 @@ curl -X POST "http://localhost:8080/api/v1/crawl" \
 }
 ```
 
-*Repeat Request (Cache Hit):*
-Executing the same command with `"forceRefresh": false` returns the result **instantly (<20ms)** directly from Redis cache with `"cached": true`!
-
-*Force Refresh Request (Cache Bypass):*
-```bash
-curl -X POST "http://localhost:8080/api/v1/crawl" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://www.forbes.com",
-    "forceRefresh": true
-  }'
-```
-
 ---
 
 ### 3. Execute Batch Parallel Crawl (`POST /api/v1/crawl/batch`)
@@ -189,34 +225,6 @@ curl -X POST "http://localhost:8080/api/v1/crawl/batch" \
     "concurrency": 3
   }'
 ```
-
----
-
-### 4. Query Crawl History & Job Details
-
-* **List Recent Crawl Jobs (`GET /api/v1/crawls?limit=10`)**:
-  ```bash
-  curl -X GET "http://localhost:8080/api/v1/crawls?limit=10"
-  ```
-
-* **Get Specific Job Details by ID (`GET /api/v1/crawls/{jobId}`)**:
-  ```bash
-  curl -X GET "http://localhost:8080/api/v1/crawls/job_1707500000000_a1b2"
-  ```
-
----
-
-### 5. Redis Cache Management Endpoints
-
-* **Get Cache Statistics (`GET /api/v1/cache/stats`)**:
-  ```bash
-  curl -X GET "http://localhost:8080/api/v1/cache/stats"
-  ```
-
-* **Clear All Cached Keys (`POST /api/v1/cache/clear`)**:
-  ```bash
-  curl -X POST "http://localhost:8080/api/v1/cache/clear"
-  ```
 
 ---
 

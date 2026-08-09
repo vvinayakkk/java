@@ -22,6 +22,20 @@ mvn spring-boot:run
 
 ---
 
+## 💡 Important: Live Server Logging (`localhost:8080`) vs. Unit Testing (`mvn test`)
+
+It is important to understand how testing vs live server execution operates in Spring Boot:
+
+### 1. Why `mvn test` does NOT print server logs in your running CLI terminal
+* `mvn test` executes unit tests (`BookControllerTest`, `BookServiceTest`) in a completely separate, isolated test process using Spring's **`MockMvc` framework**.
+* `MockMvc` simulates HTTP requests and responses **in-memory** without sending network packets over port `8080`. This allows all 58 unit tests to run in milliseconds without needing a running server or open network ports.
+
+### 2. How to see live HTTP logs & SQL queries in your `mvn spring-boot:run` terminal
+* Your running server CLI terminal (`mvn spring-boot:run`) hosts a live Tomcat web server listening on **`http://localhost:8080`**.
+* To see live HTTP request handling and Hibernate SQL queries (`Hibernate: select ... from books`) printed in real-time in your server terminal, send real HTTP requests from a browser, Swagger UI, or a **second terminal tab** using `curl`!
+
+---
+
 ## ⚙️ System Prerequisites
 
 Ensure the following tools are installed and available on your system PATH:
@@ -50,8 +64,8 @@ cd post_residency_clean/spring-bookstore
 
 ---
 
-### Step 2: Build the Application
-Clean the target folder, compile source files, execute all unit tests, and build the executable JAR:
+### Step 2: Build the Application & Run Unit Tests
+Clean the target folder, compile source files, execute all 58 unit tests, and build the executable JAR:
 
 ```bash
 mvn clean install
@@ -84,7 +98,7 @@ Upon successful startup, the terminal will log:
 
 ---
 
-## 🌐 Interactive Dashboards & Documentation
+## 🌐 Interactive Dashboards & Database Consoles
 
 Once the server is running on `http://localhost:8080`, open the following URLs in your web browser:
 
@@ -94,6 +108,32 @@ Once the server is running on `http://localhost:8080`, open the following URLs i
 | **Swagger UI (Alternative)**| `http://localhost:8080/swagger-ui/index.html` | Fallback URL path for Swagger UI. |
 | **OpenAPI 3.0 JSON Spec** | `http://localhost:8080/api-docs` | Raw OpenAPI JSON schema definition. |
 | **H2 Database Console** | `http://localhost:8080/h2-console` | Database administration console.<br/>• **JDBC URL**: `jdbc:h2:mem:bookstore`<br/>• **User**: `sa`<br/>• **Password**: *(Leave empty)* |
+
+---
+
+## 🧪 Live Verification cURL Commands (Run in a Second Terminal Tab)
+
+With `mvn spring-boot:run` running in your 1st terminal tab, open a **2nd terminal tab** and run these commands to trigger live server logging and SQL queries:
+
+```bash
+# 1. Fetch all books (Returns JSON array of books)
+curl http://localhost:8080/api/books
+
+# 2. Search books by title keyword
+curl "http://localhost:8080/api/books/search?title=Patterns"
+
+# 3. Fetch in-stock available books
+curl http://localhost:8080/api/books/available
+
+# 4. Fetch list of all authors
+curl http://localhost:8080/api/authors
+
+# 5. Fetch list of all categories
+curl http://localhost:8080/api/categories
+
+# 6. Filter books by price range ($10 - $30)
+curl "http://localhost:8080/api/books/price-range?minPrice=10&maxPrice=30"
+```
 
 ---
 
@@ -153,16 +193,6 @@ curl -X POST "http://localhost:8080/api/books" \
 | `PUT` | `/api/authors/{id}` | Update an existing author | `curl -X PUT "http://localhost:8080/api/authors/1" -H "Content-Type: application/json" -d '{"name":"Ada Lovelace Updated","biography":"Pioneer of computer algorithms"}'` |
 | `DELETE`| `/api/authors/{id}` | Delete author by ID | `curl -X DELETE "http://localhost:8080/api/authors/1"` |
 
-#### Sample Create Author Request (`POST /api/authors`)
-```bash
-curl -X POST "http://localhost:8080/api/authors" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Martin Fowler",
-    "biography": "Software developer, author, and international speaker on software architecture."
-  }'
-```
-
 ---
 
 ### 3. Category Management Endpoints (`/api/categories`)
@@ -206,23 +236,18 @@ mvn test
   mvn test -Dtest=GlobalExceptionHandlerTest
   ```
 
-### 3. Run a Single Test Method
-```bash
-mvn test -Dtest=BookControllerTest#testGetAllBooks
-```
-
-### Expected Output Format
+### 3. Expected Test Output
 ```text
 [INFO] -------------------------------------------------------
 [INFO]  T E S T S
 [INFO] -------------------------------------------------------
 [INFO] Running com.bookstore.service.BookServiceTest
-[INFO] Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.284 s
+[INFO] Tests run: 16, Failures: 0, Errors: 0, Skipped: 0
 [INFO] Running com.bookstore.controller.BookControllerTest
-[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.412 s
+[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0
 [INFO] 
 [INFO] Results:
-[INFO] Tests run: 45, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 58, Failures: 0, Errors: 0, Skipped: 0
 [INFO] BUILD SUCCESS
 ```
 
@@ -264,9 +289,3 @@ src/main/java/com/bookstore/
     ├── CatalogSyncService.java    # Asynchronous task execution (@Async)
     └── CategoryService.java
 ```
-
-### Summary of Residency Accomplishments
-1. **Days 1–3: Domain Modeling & REST Architecture**: Built JPA Entities (`Author`, `Book`, `Category`), established foreign key relationships (`@ManyToOne`), and defined clean DTO abstractions.
-2. **Days 4–6: Service Layer & Database Access**: Implemented Spring Data JPA Repositories with custom derived query methods, pagination (`Pageable`), and service-layer validation rules.
-3. **Days 7–9: Robust Web Layer & OpenAPI Documentation**: Configured Jakarta Bean Validation (`@Valid`, `@NotNull`, `@Min`, `@Size`), crafted a `@ControllerAdvice` global exception handler, and integrated OpenAPI / Swagger UI.
-4. **Days 10–12: Advanced Features & Testing**: Implemented Spring `@Cacheable` response caching, `@Async` background execution task pools, and achieved 100% pass rate across Mockito and MockMvc unit tests.
