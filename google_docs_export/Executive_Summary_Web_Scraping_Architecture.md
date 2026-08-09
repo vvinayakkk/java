@@ -2,39 +2,15 @@
 
 > **Document Type**: Single Master Architectural Specification & Reference Manual.  
 > **Target Audience**: Lead Data Engineers, Systems Architects, and Security Researchers.  
+> **Format**: Text-Only Specification with AI Image Generation Prompts (Zero Mermaid blocks).  
 > **Scope**: Complete end-to-end breakdown of web data acquisition, browser internals, multi-process Chromium architecture, Browser Context isolation, document rendering, networking protocols, framework ecosystem evaluation (Pros & Cons), Playwright supremacy deep-dive, 5-layer anti-bot evasion stack, and maximum volume ad-tech data extraction.
 
 ---
 
 ## 1. Web Data Acquisition Paradigms & Core Mechanics
 
-```mermaid
-flowchart TD
-    A["WEB DATA ACQUISITION"] --> B["CRAWLING<br/>(Discovery & Navigation)"]
-    A --> C["SCRAPING<br/>(Parsing & Extraction)"]
-
-    subgraph CrawlingScope["Crawling Scope"]
-        B1["URL Discovery"]
-        B2["Crawl Queue Management"]
-        B3["Link Graph Traversal"]
-        B4["State & Session Preservation"]
-        B5["Dynamic Navigation & Routing"]
-    end
-
-    subgraph ScrapingScope["Scraping Scope"]
-        C1["HTML Parsing"]
-        C2["DOM Tree Traversal"]
-        C3["Attribute & Text Extraction"]
-        C4["Table & Schema Structured Output"]
-        C5["Content Cleaning & Filtering"]
-    end
-
-    B --- CrawlingScope
-    C --- ScrapingScope
-
-    CrawlingScope --> D["CRAWLING + SCRAPING<br/>(End-to-End Automated Pipeline)"]
-    ScrapingScope --> D
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A sleek modern tech architecture diagram illustrating Web Data Acquisition divided into Crawling (Discovery & Navigation) and Scraping (Parsing & Data Extraction), connected to an end-to-end automated pipeline. Professional dark mode UI design, neon blue and violet accents, high resolution, clean typography."*
 
 ### 1.1 Web Scraping (Data Extraction Layer)
 * **Definition**: The passive or targeted phase of data acquisition that parses already-retrieved HTML/XML/JSON payloads into clean, structured schemas.
@@ -47,22 +23,8 @@ flowchart TD
 
 ### 1.3 Traditional HTTP Scraping vs. Headless Browser Crawling
 
-```mermaid
-flowchart TD
-    subgraph Traditional["TRADITIONAL HTTP SCRAPING"]
-        direction LR
-        ReqClient["Request Client"] -- "HTTP GET" --> Server1["Web Server"]
-        Server1 -- "Raw HTML" --> Parser1["HTML Parser"]
-        Parser1 --> Data1["Extracted Data"]
-    end
-
-    subgraph Headless["HEADLESS BROWSER CRAWLING"]
-        direction LR
-        AutoAPI["Automation API<br/>(Playwright / CDP)"] -- "Control Protocol" --> Engine["Headless Chromium Engine<br/>(Executes V8 & Blink)"]
-        Engine <--> Server2["Web Server"]
-        Engine -- "Rendered DOM Tree" --> Data2["Extracted Data"]
-    end
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A comparison infographic comparing Traditional HTTP Scraping vs Headless Browser Crawling. Left side shows simple HTTP GET request to a web server returning static HTML. Right side shows a Playwright control protocol managing a full Chromium engine with V8 JavaScript & Blink layout engines rendering live DOM trees. Modern dark theme, tech diagram style."*
 
 ### 1.4 Architectural Comparison Matrix
 
@@ -84,20 +46,8 @@ flowchart TD
 
 ### 1.6 Infrastructure Resource Cost & Performance Tradeoffs
 
-```mermaid
-flowchart LR
-    subgraph HTTP ["TRADITIONAL HTTP SCRAPER"]
-        H1["CPU: ~2%"]
-        H2["RAM: ~15MB"]
-        H3["Throughput: ~100 req/sec per core"]
-    end
-
-    subgraph Headless ["HEADLESS BROWSER CRAWLER"]
-        B1["CPU: ~45%"]
-        B2["RAM: ~350MB"]
-        B3["Throughput: ~2-5 req/sec per core"]
-    end
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A side-by-side technical resource gauge comparison. On the left: Traditional HTTP Scraper showing 2% CPU usage, 15MB RAM, 100 req/sec throughput. On the right: Headless Browser Crawler showing 45% CPU usage, 350MB RAM, 2-5 req/sec throughput. Clean corporate dashboard UI, dark background with glowing metrics."*
 
 ### 1.7 The Core Data Acquisition Mental Model
 > **`Crawler`** $\rightarrow$ **`Playwright Automation API`** $\rightarrow$ **`Chromium Engine`** $\rightarrow$ **`Browser Context`** $\rightarrow$ **`Page`** $\rightarrow$ **`Network + HTML/CSS/JS`** $\rightarrow$ **`Live DOM Tree`** $\rightarrow$ **`Playwright Locators / API Interception`** $\rightarrow$ **`Structured Data`**
@@ -106,23 +56,8 @@ flowchart LR
 
 ## 2. Browser Architecture, Engine Mechanics & Object Model Hierarchy
 
-```mermaid
-flowchart TD
-    App["Crawler Application"] --> Lib["Automation Library<br/>(Playwright / Puppeteer / Selenium)"]
-    Lib --> Browser["Browser Instance<br/>(Chromium OS Process)"]
-
-    Browser --> ContextA["Browser Context A<br/>(Incognito Profile 1)"]
-    Browser --> ContextB["Browser Context B<br/>(Incognito Profile 2)"]
-
-    ContextA --> Page1["Page 1 (Tab 1)"]
-    ContextA --> Page2["Page 2 (Tab 2)"]
-
-    Page1 --> MainFrame["Main Frame<br/>(Root Execution)"]
-    Page1 --> IFrame["iframe<br/>(Sub-frame Sandbox)"]
-
-    MainFrame --> DOMTree["DOM Tree"]
-    DOMTree --> Elements["DOM Element Nodes"]
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A top-down architectural hierarchy diagram of modern browser automation. Top node: Automation API (Playwright), branching to Browser Instance (Chromium Process), which branches to multiple Browser Contexts (Incognito Profiles), then Page Tabs, Main Frame & iframes, and finally live DOM Element nodes. Tech flowchart, glassmorphism UI."*
 
 ### 2.1 Scope of Headless Browser Capabilities
 Automation APIs control the full capabilities of modern browser binaries:
@@ -132,27 +67,13 @@ Automation APIs control the full capabilities of modern browser binaries:
 
 ### 2.2 Chromium Core Engines (Blink, V8, Skia)
 
-```mermaid
-flowchart LR
-    subgraph ChromiumEngines["CHROMIUM CORE ENGINES"]
-        Blink["BLINK<br/>(Rendering Engine)<br/>Parses HTML & CSS<br/>Computes Style & Layout<br/>Builds DOM & Render Tree"]
-        V8Engine["V8<br/>(JavaScript Engine)<br/>Compiles JS to Machine Code<br/>JIT (Ignition / TurboFan)<br/>Garbage Collection"]
-        Skia["SKIA<br/>(Graphics Engine)<br/>Hardware Rasterization<br/>2D Graphics & Canvas"]
-    end
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A tri-engine technical architecture schematic showing Chromium's 3 core engines: Blink (Rendering Engine for HTML/CSS Layout), V8 (JavaScript JIT Engine for Bytecode execution), and Skia (Graphics Engine for 2D Canvas & GPU rasterization). Dark futuristic cyber design."*
 
 ### 2.3 Chromium Multi-Process Architecture
 
-```mermaid
-flowchart TD
-    BP["BROWSER PROCESS<br/>(Central Manager & Coordinator)"]
-
-    BP --> RP1["RENDERER PROCESS 1<br/>(domain1.com - Blink & V8)"]
-    BP --> RP2["RENDERER PROCESS 2<br/>(domain2.com - Blink & V8)"]
-    BP --> GPU["GPU PROCESS<br/>(Hardware Graphics Acceleration)"]
-    BP --> Net["NETWORK SERVICE<br/>(Socket Pools & SSL/TLS)"]
-    BP --> Storage["STORAGE SERVICE<br/>(IndexedDB & Disk Cache)"]
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A multi-process software architecture diagram of Chromium. Central node: Browser Process (Manager), connected via Mojo IPC to Renderer Process 1, Renderer Process 2, GPU Process, Network Service Process, and Storage Service Process. Clean system architecture block diagram, dark theme."*
 
 1. **Browser Process**: Manages application lifecycle, address bar, tab coordination, process creation, security permissions, and IPC message routing.
 2. **Renderer Process**: Runs inside an OS-level sandbox. Executes Blink (HTML/CSS parsing) and V8 (JavaScript execution). Spawns separate processes per domain (Site Isolation).
@@ -163,30 +84,8 @@ flowchart TD
 ### 2.4 Browser Context Isolation (In-Memory Profiles & Scaling Optimization)
 A **Browser Context** represents an isolated, in-memory browser profile (equivalent to an Incognito session).
 
-```mermaid
-flowchart TD
-    BrowserInst["Browser Instance (Single Chrome Process Pool)"]
-
-    BrowserInst --> ContextA["Browser Context A (Profile 1)"]
-    BrowserInst --> ContextB["Browser Context B (Profile 2)"]
-
-    subgraph StoreA["Context A Isolated Realm"]
-        A1["Cookies A"]
-        A2["LocalStorage A"]
-        A3["IndexedDB A"]
-        A4["Pages [Tab 1, Tab 2]"]
-    end
-
-    subgraph StoreB["Context B Isolated Realm"]
-        B1["Cookies B"]
-        B2["LocalStorage B"]
-        B3["IndexedDB B"]
-        B4["Pages [Tab 3]"]
-    end
-
-    ContextA --- StoreA
-    ContextB --- StoreB
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"An isolated profile architecture diagram showing a single Chromium Browser Process hosting multiple isolated Browser Contexts (Profile 1 & Profile 2), each containing independent Cookies, LocalStorage, IndexedDB databases, and Page Tabs without spawning new browser binaries. High-end technical blueprint design."*
 
 > **IMPORTANT**: **Key Optimization Rule**: `New Browser Context ≠ New Chromium Process`.  
 > Creating a new Browser Context takes **milliseconds** and negligible RAM (~15MB) because it reuses the existing Chromium Browser process, GPU process, and Network Service while creating isolated state containers.
@@ -198,20 +97,8 @@ A **Frame** represents a document execution context. A Page contains one **Main 
 
 ### 2.6 Browser Context Isolation vs. Domain Isolation
 
-```mermaid
-flowchart TD
-    subgraph DomainIso["DOMAIN / ORIGIN ISOLATION (Within One Context)"]
-        direction LR
-        Context1["Context A"] --> Dom1["amazon.com<br/>(Cookies A1)"]
-        Context1 -- "SOP Enforced" --> Dom2["google.com<br/>(Cookies A2)"]
-    end
-
-    subgraph ContextIso["CONTEXT ISOLATION (Between Automation Contexts)"]
-        direction LR
-        BrowserPool["Browser Instance"] --> ContextA2["Context A<br/>amazon.com (User 1 Cookies)"]
-        BrowserPool --> ContextB2["Context B<br/>amazon.com (User 2 Cookies)"]
-    end
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A comparison diagram showing Domain/Origin Isolation enforced by Same-Origin Policy within one context vs Browser Context Isolation enforced between multiple incognito profiles. Dark blue tech aesthetic, sharp diagram vectors."*
 
 ---
 
@@ -219,70 +106,28 @@ flowchart TD
 
 ### 3.1 The Document Object Model (DOM)
 
-```mermaid
-flowchart TD
-    Doc["Document Node"] --> HTML["html Node"]
-    HTML --> Body["body Node"]
-    Body --> Div["div (class='product')"]
-    Div --> H1["h1 ('Title')"]
-    Div --> Btn["button (id='buy', 'Buy')"]
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A clean tree diagram visualizing the Document Object Model (DOM). Root node Document branching to html, body, div.product, h1 title, and button.buy nodes. Modern web development architecture illustration."*
 
 ### 3.2 HTML Processing & Dynamic HTML Rendering
 
-```mermaid
-flowchart TD
-    subgraph StaticFlow["STATIC HTML FLOW"]
-        S1["Initial HTML Payload"] --> S2["HTML Parser"] --> S3["Final Fixed DOM Tree"]
-    end
-
-    subgraph DynamicFlow["DYNAMIC HTML FLOW (SPA / Client-Side Rendering)"]
-        D1["Initial Skeleton Shell<br/>(&lt;div id='root'&gt;&lt;/div&gt;)"] --> D2["HTML Parser"] --> D3["Initial Skeleton DOM"]
-        D3 --> D4["V8 Executes JS Fetch API"] --> D5["Mutates DOM & Injects Nodes"] --> D6["Final Live DOM Tree"]
-    end
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A flowchart contrasting Static HTML Parsing vs Dynamic Client-Side Rendering (CSR). Top row shows initial HTML payload parsing into fixed DOM. Bottom row shows initial skeleton shell <div id='root'> executing JS Fetch APIs to dynamically insert nodes into a live DOM tree."*
 
 ### 3.3 V8 JavaScript Engine Runtime & Async Event Loop
 
-```mermaid
-flowchart TD
-    JSSource["JS Source Code"] --> Parser["V8 Parser"]
-    Parser --> AST["Abstract Syntax Tree (AST)"]
-    AST --> Ignition["Ignition Interpreter"]
-    Ignition --> Bytecode["Bytecode Execution"]
-    Bytecode --> TurboFan["TurboFan JIT Compiler"]
-    TurboFan --> MachineCode["Native Machine Code Execution"]
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A technical pipeline diagram of V8 JavaScript compilation: JS Source Code -> AST Parser -> Ignition Interpreter -> Bytecode -> TurboFan JIT Compiler -> Native Machine Code Execution. Dark neon developer diagram."*
 
 ### 3.4 The 8-Stage Browser Rendering Pipeline
 
-```mermaid
-flowchart TD
-    Stage1["1. HTTP Response Payload<br/>(Raw HTML Bytes)"] --> Stage2["2. HTML Parsing<br/>(Builds DOM Tree)"]
-    Stage2 --> Stage3["3. CSS Parsing<br/>(Builds CSSOM Tree)"]
-    Stage3 --> Stage4["4. Recalculate Style<br/>(Combines DOM + CSSOM -> Render Tree)"]
-    Stage4 --> Stage5["5. Layout / Reflow<br/>(Calculates X, Y, Width, Height)"]
-    Stage5 --> Stage6["6. Paint<br/>(Fills Text, Colors, Shadows)"]
-    Stage6 --> Stage7["7. Rasterization<br/>(Converts visual ops to GPU bitmaps)"]
-    Stage7 --> Stage8["8. Compositing<br/>(Draws GPU layers onto Screen / Buffer)"]
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"An 8-stage linear browser rendering pipeline flowchart: 1. HTML Payload -> 2. HTML Parsing (DOM) -> 3. CSS Parsing (CSSOM) -> 4. Style Recalculation -> 5. Layout/Reflow -> 6. Paint -> 7. GPU Rasterization -> 8. Compositing Screen Draw. Vibrant cyan and purple step diagram."*
 
 ### 3.5 Web Navigation Mechanics & SPA Routing
 
-```mermaid
-flowchart TD
-    subgraph HardNav["1. HARD SERVER NAVIGATION"]
-        H1["Browser"] -- "New HTTP Request" --> H2["Web Server"] -- "Full HTML Response" --> H3["Full Page Refresh"]
-    end
-
-    subgraph SPANav["2. CLIENT-SIDE SPA NAVIGATION"]
-        S1["User Click / Route"] --> S2["JS Intercepts"] --> S3["window.history.pushState()"] --> S4["Fetch API JSON"] --> S5["DOM Mutated in Place"]
-    end
-
-    subgraph HashNav["3. FRAGMENT / HASH NAVIGATION"]
-        Z1["Navigation to #section"] --> Z2["Triggers window.onhashchange"] --> Z3["Smooth Viewport Scroll"]
-    end
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A diagram illustrating 3 web navigation types: 1. Hard Server Navigation (Full page refresh), 2. Client-Side SPA Navigation (window.history.pushState with in-place DOM updates), 3. Hash Navigation (#section smooth scroll)."*
 
 ---
 
@@ -290,65 +135,18 @@ flowchart TD
 
 ### 4.1 Protocol Stack Infrastructure
 
-```mermaid
-flowchart TD
-    A["NETWORK PROTOCOL STACK"] --> B["APPLICATION LAYER"]
-    A --> C["TRANSPORT LAYER"]
-    A --> D["SECURITY LAYER"]
-
-    subgraph AppLayer["Application Layer Protocols"]
-        B1["HTTP/1.1 (Text Header, Pipelining)"]
-        B2["HTTP/2 (Binary, Multiplexed Streams)"]
-        B3["HTTP/3 (QUIC over UDP)"]
-        B4["WebSockets (RFC 6455)"]
-        B5["Server-Sent Events (SSE)"]
-    end
-
-    subgraph TransportLayer["Transport Layer Protocols"]
-        C1["TCP (Three-Way Handshake)"]
-        C2["UDP (Datagrams for QUIC)"]
-    end
-
-    subgraph SecurityLayer["Security Layer Protocols"]
-        D1["TLS 1.2 / TLS 1.3"]
-        D2["Certificate Validation"]
-        D3["JA3 / TLS Fingerprinting (Client Hello)"]
-    end
-
-    B --- AppLayer
-    C --- TransportLayer
-    D --- SecurityLayer
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A layered protocol stack diagram for modern web browsers. Top layer: Application Protocols (HTTP/1.1, HTTP/2 multiplexed, HTTP/3 QUIC, WebSockets, SSE). Middle layer: Transport Protocols (TCP & UDP). Bottom layer: Security (TLS 1.3 & JA4 Fingerprinting). Dark glassmorphism tech stack."*
 
 ### 4.2 WebSockets (Full-Duplex Real-Time Data)
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Client as Browser Client
-    participant Server as Remote Server
-
-    Client->>Server: HTTP GET /chat (Headers: Upgrade: websocket)
-    Server-->>Client: HTTP 101 Switching Protocols
-    Note over Client,Server: ESTABLISHED FULL-DUPLEX WEBSOCKET CONNECTION
-    Client->>Server: Text Frame (JSON Payload)
-    Server-->>Client: Text Frame (Real-Time Broadcast Data)
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A sequence diagram depicting WebSocket protocol handshake: Client sends HTTP GET Upgrade header -> Server responds 101 Switching Protocols -> Bidirectional real-time text/JSON frames streaming continuously over TCP."*
 
 ### 4.3 Network Interception & Request Routing (`page.route()`)
 
-```mermaid
-flowchart TD
-    Script["Automation Script<br/>(Playwright / CDP)"] --> Listen["Listens to Network.requestIntercepted"]
-
-    Renderer["Renderer Process Request"] --> Interceptor["Network Interceptor"]
-
-    Interceptor --> OptionA["PASS / MODIFY<br/>- Alter Request Headers<br/>- Inject Bearer Auth Token<br/>- Modify POST Payload data"]
-    Interceptor --> OptionB["BLOCK / MOCK<br/>- Block heavy images/fonts<br/>- Return cached JSON mock payload<br/>- Prevent analytics tracking"]
-
-    OptionA --> Server["Remote Server"]
-    OptionB --> LocalReturn["Immediate Local Response"]
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A network interception architecture diagram. Script attaches page.route handler -> Intercepts Renderer Process requests -> Path A: Pass/Modify request headers & auth tokens -> Path B: Block heavy assets & return cached mock JSON. Dark cybersecurity network diagram."*
 
 ---
 
@@ -374,60 +172,13 @@ Set-Cookie: session_id=xyz123; Domain=.example.com; Path=/; Secure; HttpOnly; Sa
 
 ### 5.2 Storage Matrix
 
-```mermaid
-flowchart TD
-    A["BROWSER STORAGE MATRIX"] --> B["LOCALSTORAGE"]
-    A --> C["SESSIONSTORAGE"]
-    A --> D["INDEXEDDB"]
-    A --> E["CACHE API"]
-    A --> F["COOKIES"]
-
-    subgraph LS["LocalStorage"]
-        B1["Origin-Scoped"]
-        B2["5MB - 10MB Limit"]
-        B3["Persistent across restarts"]
-    end
-
-    subgraph SS["SessionStorage"]
-        C1["Tab-Scoped Only"]
-        C2["Cleared on tab close"]
-        C3["Key-Value String Store"]
-    end
-
-    subgraph IDB["IndexedDB"]
-        D1["NoSQL Database Engine"]
-        D2["Large Structured Objects"]
-        D3["Asynchronous B-Tree Store"]
-    end
-
-    subgraph CacheAPI["Cache API"]
-        E1["Request / Response Pairs"]
-        E2["Service Worker Storage"]
-    end
-
-    subgraph CookieStore["HTTP Cookies"]
-        F1["Attached to HTTP Headers"]
-        F2["4KB Size Limit per Domain"]
-    end
-
-    B --- LS
-    C --- SS
-    D --- IDB
-    E --- CacheAPI
-    F --- CookieStore
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A grid matrix comparing browser client-side storage engines: LocalStorage (Key-value 10MB limit), SessionStorage (Tab-scoped), IndexedDB (NoSQL B-Tree database), Cache API (Service Worker responses), and HTTP Cookies (Header-attached with HttpOnly & SameSite flags). High tech infographic."*
 
 ### 5.3 The 7-Level Browser Isolation Pyramid
 
-```mermaid
-flowchart BT
-    L1["Level 1: ORIGIN / SITE ISOLATION<br/>(Boundary protocol scheme://host:port)"] --> L2["Level 2: SAME-ORIGIN POLICY (SOP)<br/>(JS DOM/Storage access blocked across origins)"]
-    L2 --> L3["Level 3: COOKIE ISOLATION<br/>(Domain, Path, SameSite, HttpOnly enforcement)"]
-    L3 --> L4["Level 4: BROWSER CONTEXT ISOLATION<br/>(Incognito profiles - isolated storage/cookies)"]
-    L4 --> L5["Level 5: RENDERER PROCESS ISOLATION<br/>(Site Isolation - separate OS PID per domain)"]
-    L5 --> L6["Level 6: OS PROCESS ISOLATION<br/>(Separate OS process boundaries)"]
-    L6 --> L7["Level 7: OS SANDBOX<br/>(Restricts OS syscalls via chroot, seccomp)"]
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A 7-level security pyramid diagram showing browser isolation boundaries from bottom to top: Level 1: Site Isolation -> Level 2: Same-Origin Policy -> Level 3: Cookie Isolation -> Level 4: Browser Context Isolation -> Level 5: Renderer Process Isolation -> Level 6: OS Process Isolation -> Level 7: OS Sandbox. Glowing pyramid UI design."*
 
 ---
 
@@ -435,52 +186,13 @@ flowchart BT
 
 ### 6.1 Synthetic User Interactions
 
-```mermaid
-flowchart TD
-    A["AUTOMATION DISPATCH ENGINE"] --> B["POINTER & MOUSE ACTIONS"]
-    A --> C["KEYBOARD INPUTS"]
-    A --> D["DIALOG & SYSTEM OPS"]
-
-    subgraph Pointer["Pointer & Mouse Events"]
-        B1["page.click(selector)"]
-        B2["page.dblclick(selector)"]
-        B3["page.hover(selector)"]
-        B4["page.dragAndDrop(src, dst)"]
-        B5["Mouse Trail Scrolling"]
-    end
-
-    subgraph Keyboard["Keyboard Events"]
-        C1["page.type(selector, text)"]
-        C2["page.keyboard.press('Enter')"]
-        C3["page.keyboard.down('Shift')"]
-        C4["Shortcuts ('Control+A')"]
-    end
-
-    subgraph SystemOps["System Operations"]
-        D1["File Upload (setInputFiles)"]
-        D2["File Download Handling"]
-        D3["Native Alert / Confirm Modals"]
-        D4["Tab / Window Popup Control"]
-        D5["PDF / Screenshot Capture"]
-    end
-
-    B --- Pointer
-    C --- Keyboard
-    D --- SystemOps
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"An event dispatching engine diagram for browser automation. Central Automation Dispatcher branching to Pointer/Mouse Actions (clicks, Bézier curve trails), Keyboard Input (typing cadence), and System Operations (file upload pickers & alert dialogs)."*
 
 ### 6.2 CSR vs. SSR & Client Hydration
 
-```mermaid
-flowchart TD
-    subgraph CSR["CLIENT-SIDE RENDERING (CSR - React / Vue SPA)"]
-        C_S1["Server Payload: Bare Shell<br/>(&lt;div id='root'&gt;&lt;/div&gt;)"] --> C_S2["V8 Script Execution:<br/>Downloads bundle.js"] --> C_S3["XHR / Fetch JSON API Calls"] --> C_S4["Dynamic DOM Insertion"]
-    end
-
-    subgraph SSR["SERVER-SIDE RENDERING (SSR + HYDRATION - Next.js / Nuxt)"]
-        S_S1["Server Payload: Pre-rendered HTML<br/>(&lt;div&gt;&lt;h1&gt;Title&lt;/h1&gt;&lt;/div&gt;)"] --> S_S2["Client Hydration:<br/>Downloads main.js"] --> S_S3["Attaches V8 Event Listeners to Static Nodes"]
-    end
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A comparison infographic of CSR (React SPA empty div shell + client fetch) vs SSR + Hydration (Next.js pre-rendered HTML + static script hydration). Modern web development diagram."*
 
 ---
 
@@ -488,48 +200,8 @@ flowchart TD
 
 ### 7.1 Crawler State Architecture
 
-```mermaid
-flowchart TD
-    A["CRAWLER STATE ARCHITECTURE"] --> B["URL FRONTIER"]
-    A --> C["VISITED SET"]
-    A --> D["QUEUE ENGINE"]
-    A --> E["DEDUPLICATION ENGINE"]
-    A --> F["METADATA STORE"]
-
-    subgraph Frontier["URL Frontier"]
-        B1["Discovered URLs"]
-        B2["Pending Fetch List"]
-        B3["Priority Scoring"]
-    end
-
-    subgraph Visited["Visited Set"]
-        C1["Hashes of Crawled URLs (SHA256)"]
-        C2["Bloom Filters for Fast Lookup"]
-    end
-
-    subgraph QueueEng["Queue Engine"]
-        D1["Priority Queue (Redis / RabbitMQ)"]
-        D2["FIFO / LIFO Task Scheduling"]
-    end
-
-    subgraph Dedup["Deduplication Engine"]
-        E1["URL Normalization"]
-        E2["Canonical Tag Verification"]
-        E3["Tracking Parameter Stripping"]
-    end
-
-    subgraph Metadata["Metadata Store"]
-        F1["HTTP Status Codes & Headers"]
-        F2["Depth Level & Parent Source"]
-        F3["Response Execution Time"]
-    end
-
-    B --- Frontier
-    C --- Visited
-    D --- QueueEng
-    E --- Dedup
-    F --- Metadata
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A high-scale web crawler state architecture diagram displaying URL Frontier (Priority Queue), Visited Set (SHA256 Bloom Filters), Queue Engine (Redis/RabbitMQ), Deduplication Engine, and Crawl Audit Metadata Store."*
 
 ---
 
@@ -569,70 +241,18 @@ flowchart TD
 
 ### 8.3 Why Playwright Reigns Supreme: The #1 Browser Automation Tool
 
-```mermaid
-flowchart TD
-    PW["PLAYWRIGHT: THE #1 AUTOMATION ENGINE"] --> C1["Unified Multi-Engine<br/>(Chromium, Firefox, WebKit)"]
-    PW --> C2["Light-Speed Context Isolation<br/>(Milliseconds startup, 10x RAM efficient)"]
-    PW --> C3["Smart Auto-Waiting Engine<br/>(Zero flaky sleep calls)"]
-    PW --> C4["Native Network Routing & Interception<br/>(Block assets, capture JSON APIs)"]
-    PW --> C5["Native Storage State Persistence<br/>(storageState auth reuse)"]
-    PW --> C6["Multi-Language & Async APIs<br/>(Python asyncio, JS, Java, C#)"]
-    PW --> C7["Built-in Stealth & CDP Access<br/>(Full fingerprint & header control)"]
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A central feature hub illustrating why Playwright is the #1 automation engine: Multi-engine support (Chromium/Firefox/WebKit), Light-Speed Context Isolation, Smart Auto-Waiting, Native Network Routing, Storage State Persistence, and Multi-language APIs."*
 
 ### 8.4 Browser Crawling Concurrency Scaling Models
 
-```mermaid
-flowchart TD
-    subgraph Strat1["Strategy 1: MULTIPLE PAGES (Same Context)"]
-        B1["One Browser"] --> C1["One Context"] --> P1["Page 1, Page 2, Page 3"]
-        Note1["Lowest RAM Overhead | Shared Cookie Identity"]
-    end
-
-    subgraph Strat2["Strategy 2: MULTIPLE CONTEXTS (Same Browser - RECOMMENDED)"]
-        B2["One Browser"] --> C2A["Context A (Page 1)"]
-        B2 --> C2B["Context B (Page 1)"]
-        B2 --> C2C["Context C (Page 1)"]
-        Note2["Low RAM Overhead | 100% Isolated Identity & Storage"]
-    end
-
-    subgraph Strat3["Strategy 3: MULTIPLE BROWSERS (Same Machine)"]
-        B3A["Browser 1 (Context A - PID 101)"]
-        B3B["Browser 2 (Context B - PID 102)"]
-        Note3["High RAM Overhead | Maximum OS Process Isolation"]
-    end
-
-    subgraph Strat4["Strategy 4: DISTRIBUTED GRID (Multiple Machines)"]
-        K8s["Kubernetes Cluster / Playwright Worker Nodes"] --> Worker1["Worker Node 1"]
-        K8s --> Worker2["Worker Node 2"]
-        Note4["Infinite Scale | High Ops Overhead"]
-    end
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A 4-grid diagram showing crawler concurrency models: Strategy 1: Multiple Pages in 1 Context, Strategy 2: Multiple Isolated Contexts in 1 Browser (Recommended), Strategy 3: Multiple Browsers, Strategy 4: Distributed Kubernetes Worker Grid."*
 
 ### 8.5 Complete 20-Step End-to-End Playwright Crawl Workflow
 
-```mermaid
-flowchart TD
-    Step1["1. Seed URL Ingestion"] --> Step2["2. Crawl Scheduler (Queue in Priority Frontier)"]
-    Step2 --> Step3["3. Playwright Framework Init (async with async_playwright())"]
-    Step3 --> Step4["4. Chromium Process Spawn (Headless Binary Launch)"]
-    Step4 --> Step5["5. Browser Context Allocation (Isolated Incognito Profile)"]
-    Step5 --> Step6["6. Page Creation (Open Target Tab)"]
-    Step6 --> Step7["7. Network Interception Setup (Attach page.route / Block Assets)"]
-    Step7 --> Step8["8. Navigation Dispatch (page.goto(url))"]
-    Step8 --> Step9["9. Network Transport (DNS / TLS / HTTP2 GET)"]
-    Step9 --> Step10["10. Subresource Load (HTML, CSS, JS Bundles)"]
-    Step10 --> Step11["11. V8 Script Execution (Client JS Exec & Initial DOM)"]
-    Step11 --> Step12["12. State Initialization (Populate Cookies & storageState)"]
-    Step12 --> Step13["13. Rendered DOM Generation (Blink Style, Layout & Paint)"]
-    Step13 --> Step14["14. Synthetic User Interactions (Clicks, Scrolls, Form Typing)"]
-    Step14 --> Step15["15. Dynamic DOM Mutation Wait (Await networkidle / Locators)"]
-    Step15 --> Step16["16. Data Extraction Phase (Intercept XHR JSON & locator.evaluate)"]
-    Step16 --> Step17["17. Schema Mapping & Cleaning (Native Playwright Locators)"]
-    Step17 --> Step18["18. Structured Storage (Write to Postgres / Parquet / S3)"]
-    Step18 --> Step19["19. Link Discovery & Deduplication (Extract URLs & Check Bloom Filter)"]
-    Step19 --> Step20["20. Queue Enqueue & Context Teardown (Push URLs & Close Context)"]
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A comprehensive 20-step circular/linear workflow flowchart illustrating an end-to-end Playwright crawl pipeline from Seed URL ingestion, Chromium launch, context allocation, network route setup, DOM wait, locator evaluation, to Bloom filter link deduplication and data warehouse storage."*
 
 ---
 
@@ -640,86 +260,25 @@ flowchart TD
 
 ### 9.1 The 5-Layer Anti-Bot Detection Landscape
 
-```mermaid
-flowchart TD
-    Req["Inbound Scraper Request"] --> L1["Layer 1: TLS / JA4 Protocol Handshake"]
-    L1 --> L2["Layer 2: IP Reputation & TCP Fingerprint"]
-    L2 --> L3["Layer 3: Browser Engine & CDP Leaks"]
-    L3 --> L4["Layer 4: WebGL, Canvas & Runtime Fingerprints"]
-    L4 --> L5["Layer 5: Behavioral Interaction & Honeypots"]
-
-    L5 --> Pass["ALLOWED: 200 OK + Full Data Access"]
-    L1 -- Mismatch --> Block["BLOCKED: 403 Forbidden / Turnstile Captcha"]
-    L3 -- CDP Leak --> Block
-    L5 -- Robot Path --> Block
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A 5-layer cybersecurity threat evaluation diagram showing incoming scraper requests evaluated sequentially through Layer 1: TLS JA4 Handshake -> Layer 2: IP Reputation -> Layer 3: Engine CDP Leaks -> Layer 4: WebGL/Canvas Fingerprints -> Layer 5: Behavioral Honeypots. Mismatches lead to 403 blocks; clean requests pass to 200 OK."*
 
 > **WARNING**: **The Coherence Rule**: Modern anti-bot security systems flag requests primarily on **mismatches between layers**. Presenting a Chrome User-Agent header while using a Python OpenSSL TLS signature or a standard Playwright CDP connection causes an instant 403 block.
 
 ### 9.2 The 5-Layer Unbreakable Stealth Stack
 
-```mermaid
-flowchart TD
-    subgraph Layer1["LAYER 1: PROTOCOL & TLS MATCHING"]
-        JA4["JA3 / JA4+ TLS Fingerprint Alignment<br/>(curl_cffi / uTLS)"]
-        H2Set["HTTP/2 SETTINGS Frame Matching"]
-    end
-
-    subgraph Layer2["LAYER 2: ENGINE & CDP LEAK PATCHING"]
-        Camoufox["Camoufox C++ Engine Spoofing"]
-        Patchright["Patchright CDP Leak Fixes"]
-        NoDriver["Nodriver / DrissionPage Direct CDP"]
-    end
-
-    subgraph Layer3["LAYER 3: FINGERPRINT RANDOMIZATION"]
-        WebGL["WebGL / GPU Vendor Normalization"]
-        Canvas["Canvas & AudioContext Noise Injection"]
-        WebRTC["WebRTC IP Leak Protection"]
-    end
-
-    subgraph Layer4["LAYER 4: BEHAVIORAL HUMANIZATION"]
-        Bezier["Bézier Curve Mouse Movements"]
-        Cadence["Human Typing Cadence & Delays"]
-        Honeypot["Honeypot Trap Avoidance"]
-    end
-
-    subgraph Layer5["LAYER 5: AI CAPTCHA SOLVING"]
-        Turnstile["Vision Models / Turnstile Solvers"]
-    end
-
-    Layer1 --> Layer2 --> Layer3 --> Layer4 --> Layer5
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A 5-layer stealth defense architecture diagram: Layer 1: TLS JA4 Alignment (curl_cffi) -> Layer 2: Engine CDP Patching (Patchright & Camoufox C++) -> Layer 3: WebGL/Canvas Noise Randomization -> Layer 4: Bézier Curve Mouse Humanization -> Layer 5: AI CAPTCHA Solvers."*
 
 ### 9.3 Behavioral Humanization (Bézier Curves)
 
-```mermaid
-flowchart LR
-    Start["Action Request"] --> Bezier["Generate Bézier Curve Trajectory"]
-    Bezier --> Jitter["Inject Natural Micro-Jitter & Speed Curves"]
-    Jitter --> Hover["Hover Element & Await Actionability"]
-    Hover --> Delay["Randomized Human Delay (50ms - 250ms)"]
-    Delay --> Click["Dispatch Pointer Events (down -> up -> click)"]
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A mouse movement trajectory comparison diagram. Linear robot mouse path vs Non-deterministic cubic Bézier curve mouse trajectory with speed curves, micro-jitter, deceleration, hover, and click action."*
 
 ### 9.4 Maximum Data Volume Extraction Engine (Ad Tech, Google Ads, `window.dataLayer`)
 
-```mermaid
-flowchart TD
-    Browser["Patchright / Camoufox Engine"] --> Target["Target Web Application"]
-
-    subgraph DataSources["COMPREHENSIVE DATA EXTRACTION TARGETS"]
-        DOMData["1. Live Rendered DOM Tree<br/>(Visible Text, Tables, Links)"]
-        APIResponse["2. Background XHR / Fetch JSON<br/>(Interception via page.on('response'))"]
-        AdTech["3. Ad Tech & Tracking Data<br/>(Google Ads, DoubleClick, window.dataLayer)"]
-        InlineState["4. Inline Application State<br/>(__NEXT_DATA__, Redux, JSON-LD)"]
-        Frames["5. Shadow DOM & OOPIF iframes<br/>(Embedded Ads & Widgets)"]
-    end
-
-    Target --> DataSources
-
-    DataSources --> Normalizer["Data Normalizer & Schema Mapper"]
-    Normalizer --> Storage["Data Warehouse<br/>(PostgreSQL / Parquet / S3)"]
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"An ad-tech data extraction architecture diagram showing a stealth browser capturing 5 data targets: Live DOM tree, Background XHR/Fetch JSON responses, Ad Tech/Google Ads parameters, Inline Next.js state (__NEXT_DATA__ & window.dataLayer), and Shadow DOM/OOPIF iframes, piping to a PostgreSQL/Parquet data warehouse."*
 
 ### 9.5 Production Master Stealth Scraper Code Implementation
 
@@ -836,8 +395,5 @@ if __name__ == "__main__":
 
 ## 10. Master Architectural Blueprint
 
-```mermaid
-flowchart LR
-    Crawler["Crawler Engine"] --> Patchright["Patchright / Camoufox Engine"] --> JA4Proxy["JA4 TLS Match + Residential Proxy"] --> Context["Browser Context"] --> Page["Page Tab"]
-    Page --> Network["Network Subresources & Ad Networks"] --> Interception["API JSON Interception & Ad Tech Extractor"] --> LiveDOM["Live DOM & Inline State"] --> Pipeline["Data Warehouse Pipeline"]
-```
+> 🎨 **AI Image Generation Prompt (Copy & Paste for GPT / Midjourney)**:  
+> *"A master architectural blueprint diagram showing Crawler Engine -> Patchright/Camoufox Stealth Engine -> JA4 TLS Proxy -> Browser Context -> Page Tab -> Network/Ad Interception -> Live DOM & State -> Data Pipeline. Sleek dark cyberpunk technology diagram."*
